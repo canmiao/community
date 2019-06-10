@@ -72,8 +72,6 @@ public class AuthorizeController {
             userMapper.insert(user);
             response.addCookie(new Cookie("token",token));
 
-            //将部分用户信息传到Session域中。
-            //request.getSession().setAttribute("githubUser", githubUser);
             //登陆成功后回到首页
             response.sendRedirect("/");
         } else {
