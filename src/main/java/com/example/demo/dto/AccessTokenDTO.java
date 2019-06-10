@@ -2,7 +2,7 @@ package com.example.demo.dto;
 
 /**
  * @Classname AccessTokenDTO
- * @Description TODO
+ * @Description Github中获取Token需要的参数
  * @Date 2019/6/9 10:21
  * @Created by hp
  */

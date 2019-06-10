@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -18,17 +19,20 @@ import java.util.UUID;
 
 /**
  * @Classname AuthorizeController
- * @Description TODO
+ * @Description 供Github回调的控制类接口
  * @Date 2019/6/9 10:10
- * @Created by hp
+ * @Created by 池灿淼
  */
 @RestController
 public class AuthorizeController {
 
-    @Autowired              //自动把spring容器内的对象的实例加载到当前使用的上下文
+    @Autowired                                          //自动把spring容器内的对象的实例加载到当前使用的上下文
     private GithubProvider githubProvider;
 
-    @Value("${github.client.id}")
+    @Autowired
+    private UserMapper userMapper;
+
+    @Value("${github.client.id}")                       //自动注入配置文件中的配置
     private String clientId;
 
     @Value("${github.client.secret}")
@@ -37,10 +41,11 @@ public class AuthorizeController {
     @Value("${github.redirect.uri}")
     private String redirectUri;
 
-    @Autowired
-    private UserMapper userMapper;
-
-
+    /**
+     * @Author 池灿淼
+     * @Date 2019/6/10 12:52
+     * @Description Github回调的接口，参数问GitHub返回的code和status。
+     **/
     @GetMapping("/callback")
     public void callback(@RequestParam(name="code") String code,
                            @RequestParam(name="state") String state,
@@ -55,16 +60,22 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessTolen(accessTokenDto);
         GithubUser githubUser = githubProvider.getUser(accessToken);
         if (githubUser != null) {
+            //登陆成功
             User user = new User();
-            user.setToken(UUID.randomUUID().toString());
+            String token = UUID.randomUUID().toString();          //UUID: 通用唯一辨识码，由32位十六进制数组成("20ce33b2-644f-422d-9fc5-bbea05f25e0a")
+            user.setToken(token);
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setName(githubUser.getName());
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
+            //将用户信息写入数据库
             userMapper.insert(user);
-            request.getSession().setAttribute("githubUser", githubUser);
+            response.addCookie(new Cookie("token",token));
+
+            //将部分用户信息传到Session域中。
+            //request.getSession().setAttribute("githubUser", githubUser);
+            //登陆成功后回到首页
             response.sendRedirect("/");
-            //登陆成功，写cookie和session
         } else {
             //登陆失败，重新登陆
             response.sendRedirect("/");
