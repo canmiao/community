@@ -10,7 +10,7 @@
 </head>
 <body>
     <nav class="navbar navbar-default">
-        <div class="container-fluid">
+        <div class="container-fluid yinyin">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                     <span class="sr-only">淼淼集团</span>
@@ -49,7 +49,7 @@
             <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
                 <h2><span class="glyphicon glyphicon-apple" aria-hidden="true"></span> 发起</h2>
                 <hr>
-                <form action="">
+                <form action="/publish" method="post">
                     <div class="form-group">
                         <label for="title">问题标题 (简单扼要)</label>
                         <input type="text" class="form-control" id="title" placeholder="问题标题.....">
@@ -62,6 +62,11 @@
                         <label for="title">添加标签</label>
                         <input type="text" class="form-control" id="tag" placeholder="输入标签，以逗号分隔">
                     </div>
+
+
+
+
+
                     <button type="submit" class="btn btn-success btn-publish">发布</button>
                 </form>
             </div>
