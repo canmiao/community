@@ -59,7 +59,7 @@ public class AuthorizeController {
         accessTokenDto.setState(state);
         String accessToken = githubProvider.getAccessTolen(accessTokenDto);
         GithubUser githubUser = githubProvider.getUser(accessToken);
-        if (githubUser != null) {
+        if (githubUser != null && githubUser.getId() != null) {
             //登陆成功
             User user = new User();
             String token = UUID.randomUUID().toString();          //UUID: 通用唯一辨识码，由32位十六进制数组成("20ce33b2-644f-422d-9fc5-bbea05f25e0a")

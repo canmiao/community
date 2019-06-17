@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
@@ -28,6 +29,10 @@ public class PublishController {
     private QuestionMapper questionMapper;
 
     @GetMapping("/publish")
+    public  String doPublish() {
+        return "publish";
+    }
+    @PostMapping("/publish")
     public String publish(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "description", required = false) String description,
@@ -35,21 +40,7 @@ public class PublishController {
             HttpServletRequest request,
             Model model
             ) {
-        model.addAttribute("title",title);
-        model.addAttribute("description",description);
-        model.addAttribute("tag",tag);
-        if (title == null || title == "") {
-            model.addAttribute("error","标题不能为空！");
-            return "publish";
-        }
-        if (description == null || description == "") {
-            model.addAttribute("error","问题补充不能为空！");
-            return "publish";
-        }
-        if (tag == null || tag   == "") {
-            model.addAttribute("error","标签不能为空！");
-            return "publish";
-        }
+        //判定用户是否已登陆
         User user = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -65,7 +56,22 @@ public class PublishController {
             }
         }
         if (user == null) {
-            model.addAttribute("error","用户未登陆");
+            model.addAttribute("error","用户未登陆!");
+            return "publish";
+        }
+        model.addAttribute("title",title);
+        model.addAttribute("description",description);
+        model.addAttribute("tag",tag);
+        if (title == null || title == "") {
+            model.addAttribute("error","标题不能为空！");
+            return "publish";
+        }
+        if (description == null || description == "") {
+            model.addAttribute("error","问题补充不能为空！");
+            return "publish";
+        }
+        if (tag == null || tag  == "") {
+            model.addAttribute("error","标签不能为空！");
             return "publish";
         }
         Question question = new Question();
